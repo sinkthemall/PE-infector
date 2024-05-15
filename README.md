@@ -9,7 +9,7 @@ Final file: ``final.exe``
 
 ### What it does
 - [x] TLS callback inject
-- [x] Inject itself to anther file (in same directory)
+- [x] Inject itself to anther file (in same directory), the infected can also do the same
 - [x] Checking debugger (anti debug)
 - [ ] Checking Virtualization (anti vm, curently only vmware and vbox, add more later)
 - [ ] IAT patching
