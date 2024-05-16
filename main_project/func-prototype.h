@@ -23,6 +23,7 @@ char aOurGoal[] __attribute__((section(".text"))) = "Sucess hacking!!!";
 char aExitProcess[] __attribute__((section(".text"))) = "ExitProcess";
 char aNtQueryInformationProcess[] __attribute__((section(".text"))) = "NtQueryInformationProcess";
 char aGetCurrentProcess[] __attribute__((section(".text"))) = "GetCurrentProcess";
+char aDetected[] __attribute__((section(".text"))) = "VM detected!";
 
 /////// Pure copy, but there is no point in coding them again as it only declare string and define func pointer (rename ???)
 typedef HANDLE(WINAPI * pCreateFileA)(LPCSTR lpFileName, DWORD dwDesiredAccess, DWORD dwShareMode,

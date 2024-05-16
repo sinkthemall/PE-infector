@@ -30,7 +30,7 @@ main:
 	
 	gcc start.o decryptor.o shellcode.o -o final.o -m64 -fdata-sections -fno-asynchronous-unwind-tables -fno-ident -Wall -Wextra -nostdlib -Wl,-Tlinkerscript.ld,--no-seh
 	ld final.o -o final.exe
-	# ./encryptor.exe
+	./encryptor.exe
 run: shellcode.exe
 	./shellcode.exe
 clean:

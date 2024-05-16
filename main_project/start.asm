@@ -14,7 +14,7 @@ WinMain:
 ;     add     rdi, 0x8
 ;     cmp     rdi, 0x960
 ;     jl      Loop
-    ; call    reStore
+    call    reStore
     call    shellcode
     ; mov     rax, 0xcafebabedeadbeef
     ; push    rax
