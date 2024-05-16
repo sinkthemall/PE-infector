@@ -16,7 +16,7 @@ Final file: ``final.exe``
 - [x] All shellcode, only .text section required
 
 ### Some note
--   About Anti VM: I use cpuid for detection, if you using windows with hyperV enable, you probably gonna get VM detect message even you run it on physical OS. That's because, when hypervisor is enable, the host OS is still gonna run under virtualization (this will explain everything, in the limitation part: ![link](https://learn.microsoft.com/en-us/virtualization/hyper-v-on-windows/about/))
+-   About Anti VM: I use cpuid for detection, if you using windows with hyperV enable, you probably gonna get VM detect message even you run it on physical OS. That's because, when hypervisor is enable, the host OS is still gonna run under virtualization (this will explain everything, in the limitation part: [link](https://learn.microsoft.com/en-us/virtualization/hyper-v-on-windows/about/))
 -   Currently I dont have time to implement some method such as: checking registry (for detect VM), capture process list and check for debugger, ... That will be story of another time.
 -   There is no harm in the original code, but I still warn you to compile it instead of using my PE.
 -   If you want to make the reverse task more challenging, you should add -s and -O3 flag to the last line( the ``gcc start.o decryptor.o shellcode.o -o final.o -m64 ...``) to strip all symbol and optimize code
