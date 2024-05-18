@@ -41,6 +41,9 @@ char aXen[] __attribute__((section(".text"))) = "XenVMMXenVMM";
 char aParallels[] __attribute__((section(".text"))) = " lrpepyh  vr";
 char aVirtualBox[] __attribute__((section(".text"))) = "VBoxVBoxVBox";
 
+char aHyperVRegKey[] __attribute__((section(".text"))) = "SOFTWARE\\Microsoft\\Virtual Machine\\Guest\\Parameters";
+char aVirtualID[] __attribute__((section(".text"))) = "VirtualMachineID";
+char aVirtualName[] __attribute__((section(".text"))) = "VirtualMachineName";
 
 
 BOOL detectCPUID_ManufactureID(HANDLE kernel32, pGetProcAddress _GetProcAddress, pLoadLibraryA _LoadLibraryA) /// I dont know why I do this =)), just for fun, the checkHypervisorBit is already enough
@@ -69,7 +72,7 @@ BOOL detectCPUID_ManufactureID(HANDLE kernel32, pGetProcAddress _GetProcAddress,
     *(unsigned int *)(&nameID[4]) = ecx;
     *(unsigned int *)(&nameID[8]) = edx;
 
-    _MessageBoxA(NULL, nameID, NULL, 0);
+    // _MessageBoxA(NULL, nameID, NULL, 0);
     if (!D_strncmp((char *)nameID, aKVM, 12))
     {
         // _MessageBoxA(NULL, aKVM, NULL, 0);
@@ -100,6 +103,68 @@ BOOL detectCPUID_ManufactureID(HANDLE kernel32, pGetProcAddress _GetProcAddress,
         // _MessageBoxA(NULL, aVirtualBox, NULL, 0);
         return TRUE;
     }   
+    return FALSE;
+}
+
+BOOL detectRegKey(HANDLE kernel32, pGetProcAddress _GetProcAddress, pLoadLibraryA _LoadLibraryA)
+{
+    HMODULE _Advapi32 = _LoadLibraryA(aAdvapi32);
+    ////////// Function resolution ///////////
+    pRegOpenKeyExA _RegOpenKeyExA = _GetProcAddress(_Advapi32, aRegOpenKeyExA);
+    pRegQueryValueExA _RegQueryValueKeyExA = _GetProcAddress(_Advapi32, aRegQueryValueExA);
+    pRegCloseKey _RegCloseKey = _GetProcAddress(_Advapi32, aRegCloseKey);
+    ////////// End of resolution ///////////
+    HKEY hKey;
+    LONG result;
+
+    // I ran out of time, also I only check for hyperV as CPUID_hypervisorbit will give wrong answer if hypervisor is on
+    ///////// Check if the key exist//////////
+    result = _RegOpenKeyExA(HKEY_LOCAL_MACHINE, aHyperVRegKey, 0, KEY_READ, &hKey);
+    if (result != ERROR_SUCCESS)
+    {
+        if (result == ERROR_FILE_NOT_FOUND)
+        {
+            goto THEREISNOT;
+        }
+        else
+        {
+            goto THEREIS; /// if for some reason, it exist but cannot process, then I say "NO"
+        }
+    }
+    result =  _RegQueryValueKeyExA(hKey, aVirtualName, NULL, NULL, NULL, NULL);
+
+    if (result == ERROR_SUCCESS)
+    {
+        goto THEREIS;
+    }
+    else if (result == ERROR_FILE_NOT_FOUND)
+    {
+        goto THEREISNOT;
+    }
+    else 
+    {
+        goto THEREIS;
+    }
+
+    result =  _RegQueryValueKeyExA(hKey, aVirtualID, NULL, NULL, NULL, NULL);
+    if (result == ERROR_SUCCESS)
+    {
+        goto THEREIS;
+    }
+    else if (result == ERROR_FILE_NOT_FOUND)
+    {
+        goto THEREISNOT;
+    }
+    else 
+    {
+        goto THEREIS;
+    }
+    
+    THEREIS:
+    _RegCloseKey(hKey);
+    return TRUE;
+    THEREISNOT:
+    _RegCloseKey(hKey);
     return FALSE;
 }
 

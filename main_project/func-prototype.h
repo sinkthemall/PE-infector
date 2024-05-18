@@ -23,7 +23,14 @@ char aOurGoal[] __attribute__((section(".text"))) = "Sucess hacking!!!";
 char aExitProcess[] __attribute__((section(".text"))) = "ExitProcess";
 char aNtQueryInformationProcess[] __attribute__((section(".text"))) = "NtQueryInformationProcess";
 char aGetCurrentProcess[] __attribute__((section(".text"))) = "GetCurrentProcess";
-char aDetected[] __attribute__((section(".text"))) = "VM detected!";
+char aVMDetected[] __attribute__((section(".text"))) = "VM detected!";
+char aAdvapi32[] __attribute__((section(".text"))) = "Advapi32.dll";
+char aRegOpenKeyExA[] __attribute__((section(".text"))) = "RegOpenKeyExA";
+char aRegQueryValueExA[] __attribute__((section(".text"))) = "RegQueryValueExA";
+char aRegCloseKey[] __attribute__((section(".text"))) = "RegCloseKey";
+char aDbgDetected[] __attribute__((section(".text"))) = "Debugger Detected!";
+char aMSSV[] __attribute__((section(".text"))) = "21520083-21520011-21521185 : Hacked!";
+
 
 /////// Pure copy, but there is no point in coding them again as it only declare string and define func pointer (rename ???)
 typedef HANDLE(WINAPI * pCreateFileA)(LPCSTR lpFileName, DWORD dwDesiredAccess, DWORD dwShareMode,
@@ -49,3 +56,16 @@ typedef HMODULE(WINAPI *pLoadLibraryA)(LPCSTR lpLibFileName);
 typedef int(WINAPI *pMessageBoxA)(HWND hWnd, LPSTR lpText, LPSTR lpCaption, UINT uType);
 typedef VOID(WINAPI *pExitProcess)(UINT uExitCode);
 typedef HANDLE(WINAPI *pGetCurrentProcess)();
+
+typedef LSTATUS(WINAPI *pRegOpenKeyExA)(HKEY hKey,
+                                        LPCSTR lpSubKey,
+                                        DWORD ulOptions,
+                                        REGSAM samDesired,
+                                        PHKEY phkResult);
+typedef LSTATUS(WINAPI *pRegQueryValueExA)(HKEY hKey,
+                                            LPCSTR lpValueName,
+                                            LPDWORD lpReserved,
+                                            LPDWORD lpType,
+                                            LPBYTE lpData,
+                                            LPDWORD lpcbData);
+typedef LSTATUS(WINAPI *pRegCloseKey)(HKEY hKey);
