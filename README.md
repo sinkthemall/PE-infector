@@ -11,7 +11,7 @@ Final file: ``final.exe``
 - [x] TLS callback inject
 - [x] Inject itself to anther file (in same directory), the infected can also do the same
 - [x] Checking debugger (anti debug)
-- [x] Checking Virtualization (anti vm, curently only vmware and vbox, add more later)
+- [x] Checking Virtualization
 - [ ] IAT patching
 - [x] All shellcode, only .text section required
 
